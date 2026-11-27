@@ -1,0 +1,19 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+*.egg-info/
+build/
+
+# MLflow local tracking
+mlruns/
+mlartifacts/
+mlflow.db
+
+# generated
+reports/
+models/*
+!models/churn_model.joblib
