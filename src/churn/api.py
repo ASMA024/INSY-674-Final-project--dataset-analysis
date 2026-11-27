@@ -62,8 +62,6 @@ class Customer(BaseModel):
 
 class Prediction(BaseModel):
     churn_probability: float
-    will_churn: bool
-    expected_offer_value: float
     send_offer: bool
 
 

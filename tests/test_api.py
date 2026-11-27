@@ -34,7 +34,7 @@ def test_predict(client, payload):
     assert r.status_code == 200
     body = r.json()
     assert 0 <= body["churn_probability"] <= 1
-    assert isinstance(body["will_churn"], bool)
+    assert isinstance(body["send_offer"], bool)
 
 
 def test_predict_batch(client, payload):
