@@ -1,4 +1,4 @@
-"""Model loading + scoring + retention-offer business logic."""
+"""Model loading and scoring."""
 
 from __future__ import annotations
 
@@ -34,23 +34,13 @@ def get_bundle() -> dict:
     return load_bundle()
 
 
-def offer_value(proba: float, monthly_charges: float, assumptions: dict) -> float:
-    """Expected net value of sending a retention offer to one customer.
-
-    = P(churn) * P(offer works) * revenue saved over clv_months - offer cost
-    """
-    saved = monthly_charges * assumptions["clv_months"]
-    return proba * assumptions["success_rate"] * saved - assumptions["offer_cost"]
-
-
 def score(df: pd.DataFrame, bundle: dict) -> pd.DataFrame:
     df = df[bundle["input_columns"]]
     proba = bundle["model"].predict_proba(df)[:, 1]
-    out = pd.DataFrame({"churn_probability": proba})
-    out["will_churn"] = out["churn_probability"] >= bundle["threshold"]
-    out["expected_offer_value"] = [
-        offer_value(p, m, bundle["assumptions"])
-        for p, m in zip(proba, df["MonthlyCharges"], strict=True)
-    ]
-    out["send_offer"] = out["will_churn"] & (out["expected_offer_value"] > 0)
-    return out
+    # Same rule as score_customers() in the notebook: the threshold was already chosen
+    # to minimise total cost, so it is the whole decision. Probabilities come from a
+    # class-weighted model and are not calibrated, so don't read them as literal odds.
+    return pd.DataFrame({
+        "churn_probability": proba,
+        "send_offer": proba >= bundle["threshold"],
+    })
