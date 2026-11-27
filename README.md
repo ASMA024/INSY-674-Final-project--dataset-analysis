@@ -71,3 +71,70 @@ SHAP shows that internet type, tenure and contract type drive most predictions, 
 4. The model misses loyal-looking churners because their reasons for leaving aren't in the data. Contract end dates, service calls and complaints would help most.
 5. This is an IBM sample dataset from one company and may be simplified. The model would need to be retrained on the company's own recent data.
 6. With class weights, the predicted probabilities are higher than the real churn rates (see the calibration plot). This doesn't affect the ranking or the cost-based threshold, but the scores shouldn't be shown to managers as literal percentages without calibrating them first.
+
+## Telco Churn — MLOps
+
+Logistic-regression churn model (ROC AUC 0.842, recall 0.83 @ threshold 0.45) packaged
+as a tested, containerised, monitored service.
+
+```
+src/churn/
+  config.py      columns, hyperparameters, threshold, business assumptions
+  features.py    TelcoFeatures (engineered columns)
+  data.py        load + stratified 80/20 split (random_state=42)
+  pipeline.py    features -> ColumnTransformer -> LogisticRegression
+  train.py       train, log to MLflow, register as churn-model@champion
+  predict.py     load model (local joblib or MLflow registry) + offer economics
+  api.py         FastAPI: /health, /predict, /predict/batch
+  drift.py       Evidently drift report on simulated scenarios
+tests/           pytest (synthetic data — no CSV needed in CI)
+.github/         CI workflow + PR template
+```
+
+### Quickstart
+
+```bash
+python -m venv .venv && source .venv/bin/activate
+make install          # deps + editable install of src/churn
+make test             # ruff + pytest
+make train            # logs a run to MLflow (sqlite:///mlflow.db)
+make register         # same, and registers churn-model, alias @champion
+make mlflow-ui        # http://127.0.0.1:5000
+make serve            # http://127.0.0.1:8000/docs
+make drift            # HTML reports in reports/
+make docker           # build + run the API container on :8000
+```
+
+Serve the registry model instead of the local file:
+
+```bash
+MODEL_URI=models:/churn-model@champion uvicorn churn.api:app
+```
+
+### Drift scenarios (data has no dates, so drift is simulated)
+
+Reference = training set. Current = test set with a synthetic shift.
+
+| scenario | what changes | expected flags |
+|---|---|---|
+| `none` | nothing | none (sanity check) |
+| `price_hike` | MonthlyCharges +20% | MonthlyCharges, prediction |
+| `fiber_rollout` | 50% DSL → fiber, ⅓ auto-pay → e-check | InternetService, PaymentMethod, prediction |
+| `new_customers` | tenure shrinks, more month-to-month | tenure, TotalCharges, Contract, prediction |
+
+### Workflow
+
+1. Pick a card on the project board, create a branch `feat/<short-name>`.
+2. Open a PR to `main` — CI runs lint, tests, Docker build + smoke test.
+3. Engineering lead reviews and merges. Pushes to `main` publish the image to GHCR.
+
+### Gotchas we hit
+
+- The notebook pickled `__main__.TelcoFeatures`, which can't be loaded outside the
+  notebook. The class now lives in `churn.features`; `scripts/migrate_legacy_model.py`
+  converts an old file.
+- `scikit-learn` is pinned to 1.7.2 (the training version) — pickles aren't portable
+  across versions.
+- `pandas<3`: Evidently 0.7 breaks on pandas 3.
+- MLflow 3 serialises sklearn with skops, so `TelcoFeatures` is passed in
+  `skops_trusted_types`.

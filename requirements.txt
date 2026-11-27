@@ -1,0 +1,8 @@
+# Runtime (what the API / Docker image needs)
+scikit-learn==1.7.2   # must match the version the model was trained with
+pandas>=2.2,<3        # evidently 0.7 is not compatible with pandas 3 yet
+numpy>=1.26,<3
+joblib>=1.4
+fastapi>=0.115
+uvicorn[standard]>=0.30
+pydantic>=2.7
