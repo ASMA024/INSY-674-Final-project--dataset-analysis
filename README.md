@@ -4,6 +4,30 @@ INSY 674 Final Project
 
 All the code is in `Telco_Churn_Project.ipynb`. The notebook follows the same five steps as this README, so each section here points to the matching part of the notebook.
 
+## Approach at a glance
+
+```mermaid
+flowchart TD
+    data["IBM Telco Customer Churn · 7,043 customers"]
+    select["Select the model"]
+    lr["Logistic regression"]
+    rule["Send an offer if score ≥ 0.45"]
+    evaluate["Evaluate on 1,409 customers"]
+
+    data -->|"80% · Training"| select
+    select -->|"5-fold CV · Compare by PR-AUC"| lr
+    lr -->|"Minimize cost on out-of-fold scores"| rule
+    rule --> evaluate
+    data -->|"20% · Held out for final evaluation"| evaluate
+
+    classDef source fill:#eef3f9,stroke:#b8c4d4,color:#2d3a4a
+    classDef chosen fill:#e3f2ec,stroke:#6aa58a,color:#1d4d3a
+    classDef final fill:#213f4a,stroke:#213f4a,color:#ffffff
+    class data source
+    class lr,rule chosen
+    class evaluate final
+```
+
 ## How to run it
 
 1. Open the notebook in Jupyter or VS Code with a Python 3 environment that has pandas, scikit-learn, matplotlib and seaborn (Anaconda works).
