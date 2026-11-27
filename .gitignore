@@ -17,3 +17,4 @@ mlflow.db
 reports/
 models/*
 !models/churn_model.joblib
+.DS_Store
