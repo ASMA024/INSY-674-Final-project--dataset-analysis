@@ -22,6 +22,4 @@ def split_xy(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:
 
 def train_test(df: pd.DataFrame):
     X, y = split_xy(df)
-    return train_test_split(
-        X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y
-    )
+    return train_test_split(X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y)

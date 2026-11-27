@@ -48,9 +48,14 @@ def test_missing_total_charges_ok(client, payload):
     assert client.post("/predict", json=payload).status_code == 200
 
 
-@pytest.mark.parametrize("field,bad", [
-    ("Contract", "Three year"), ("tenure", -1), ("MonthlyCharges", "abc"),
-])
+@pytest.mark.parametrize(
+    "field,bad",
+    [
+        ("Contract", "Three year"),
+        ("tenure", -1),
+        ("MonthlyCharges", "abc"),
+    ],
+)
 def test_invalid_input_rejected(client, payload, field, bad):
     payload[field] = bad
     assert client.post("/predict", json=payload).status_code == 422

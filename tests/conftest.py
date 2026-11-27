@@ -14,26 +14,42 @@ def make_customers(n: int = 300, seed: int = 0) -> pd.DataFrame:
     rng = np.random.default_rng(seed)
     tenure = rng.integers(0, 73, n)
     monthly = rng.uniform(18, 120, n).round(2)
-    df = pd.DataFrame({
-        "gender": rng.choice(["Female", "Male"], n),
-        "SeniorCitizen": rng.integers(0, 2, n),
-        "Partner": rng.choice(YN, n),
-        "Dependents": rng.choice(YN, n),
-        "tenure": tenure,
-        "PhoneService": rng.choice(YN, n),
-        "MultipleLines": rng.choice(["Yes", "No", "No phone service"], n),
-        "InternetService": rng.choice(["DSL", "Fiber optic", "No"], n),
-        **{c: rng.choice(YNI, n) for c in [
-            "OnlineSecurity", "OnlineBackup", "DeviceProtection",
-            "TechSupport", "StreamingTV", "StreamingMovies"]},
-        "Contract": rng.choice(["Month-to-month", "One year", "Two year"], n),
-        "PaperlessBilling": rng.choice(YN, n),
-        "PaymentMethod": rng.choice([
-            "Electronic check", "Mailed check",
-            "Bank transfer (automatic)", "Credit card (automatic)"], n),
-        "MonthlyCharges": monthly,
-        "TotalCharges": (monthly * tenure).round(2).astype(str),
-    })
+    df = pd.DataFrame(
+        {
+            "gender": rng.choice(["Female", "Male"], n),
+            "SeniorCitizen": rng.integers(0, 2, n),
+            "Partner": rng.choice(YN, n),
+            "Dependents": rng.choice(YN, n),
+            "tenure": tenure,
+            "PhoneService": rng.choice(YN, n),
+            "MultipleLines": rng.choice(["Yes", "No", "No phone service"], n),
+            "InternetService": rng.choice(["DSL", "Fiber optic", "No"], n),
+            **{
+                c: rng.choice(YNI, n)
+                for c in [
+                    "OnlineSecurity",
+                    "OnlineBackup",
+                    "DeviceProtection",
+                    "TechSupport",
+                    "StreamingTV",
+                    "StreamingMovies",
+                ]
+            },
+            "Contract": rng.choice(["Month-to-month", "One year", "Two year"], n),
+            "PaperlessBilling": rng.choice(YN, n),
+            "PaymentMethod": rng.choice(
+                [
+                    "Electronic check",
+                    "Mailed check",
+                    "Bank transfer (automatic)",
+                    "Credit card (automatic)",
+                ],
+                n,
+            ),
+            "MonthlyCharges": monthly,
+            "TotalCharges": (monthly * tenure).round(2).astype(str),
+        }
+    )
     df.loc[df["tenure"] == 0, "TotalCharges"] = " "  # mimic the real blanks
     return df[INPUT_COLUMNS]
 

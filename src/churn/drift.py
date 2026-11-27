@@ -59,8 +59,9 @@ def simulate(current: pd.DataFrame, scenario: str, seed: int = 0) -> pd.DataFram
     return SCENARIOS[scenario](df, np.random.default_rng(seed))
 
 
-def run_drift(reference: pd.DataFrame, current: pd.DataFrame, bundle: dict,
-              out_html: str | Path | None = None) -> dict:
+def run_drift(
+    reference: pd.DataFrame, current: pd.DataFrame, bundle: dict, out_html: str | Path | None = None
+) -> dict:
     from evidently import Report
     from evidently.presets import DataDriftPreset
 

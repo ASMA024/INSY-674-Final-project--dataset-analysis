@@ -38,10 +38,6 @@ class TelcoFeatures(BaseEstimator, TransformerMixin):
         X["num_addons"] = (X[ADDON_COLS] == "Yes").sum(axis=1)
         # Positive = paid more historically than current monthly rate implies
         X["price_change"] = X["TotalCharges"] - X["MonthlyCharges"] * X["tenure"]
-        X["tenure_group"] = pd.cut(
-            X["tenure"], bins=TENURE_BINS, labels=TENURE_LABELS
-        ).astype(str)
-        X["auto_payment"] = (
-            X["PaymentMethod"].str.contains("automatic", case=False).astype(int)
-        )
+        X["tenure_group"] = pd.cut(X["tenure"], bins=TENURE_BINS, labels=TENURE_LABELS).astype(str)
+        X["auto_payment"] = X["PaymentMethod"].str.contains("automatic", case=False).astype(int)
         return X

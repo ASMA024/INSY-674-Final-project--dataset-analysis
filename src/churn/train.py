@@ -64,8 +64,14 @@ def main(argv=None) -> dict[str, float]:
         pipe = build_pipeline().fit(X_train, y_train)
         metrics = evaluate(pipe, X_test, y_test, c.THRESHOLD)
 
-        mlflow.log_params({**c.MODEL_PARAMS, "threshold": c.THRESHOLD,
-                           "test_size": c.TEST_SIZE, "random_state": c.RANDOM_STATE})
+        mlflow.log_params(
+            {
+                **c.MODEL_PARAMS,
+                "threshold": c.THRESHOLD,
+                "test_size": c.TEST_SIZE,
+                "random_state": c.RANDOM_STATE,
+            }
+        )
         mlflow.log_params({f"biz_{k}": v for k, v in c.ASSUMPTIONS.items()})
         mlflow.log_metrics(metrics)
 
@@ -92,9 +98,7 @@ def main(argv=None) -> dict[str, float]:
             latest = client.search_model_versions(
                 f"name='{c.REGISTERED_MODEL_NAME}' and run_id='{run.info.run_id}'"
             )[0]
-            client.set_registered_model_alias(
-                c.REGISTERED_MODEL_NAME, "champion", latest.version
-            )
+            client.set_registered_model_alias(c.REGISTERED_MODEL_NAME, "champion", latest.version)
             print(f"Registered {c.REGISTERED_MODEL_NAME} v{latest.version} as @champion")
 
     print({k: round(v, 4) for k, v in metrics.items()})

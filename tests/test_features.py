@@ -32,19 +32,34 @@ def test_price_change(row):
     assert transform(row)["price_change"].iloc[0] == pytest.approx(20.0)
 
 
-@pytest.mark.parametrize("tenure,group", [
-    (0, "0-12"), (12, "0-12"), (13, "13-24"), (24, "13-24"),
-    (25, "25-48"), (48, "25-48"), (49, "49-72"), (72, "49-72"), (90, "49-72"),
-])
+@pytest.mark.parametrize(
+    "tenure,group",
+    [
+        (0, "0-12"),
+        (12, "0-12"),
+        (13, "13-24"),
+        (24, "13-24"),
+        (25, "25-48"),
+        (48, "25-48"),
+        (49, "49-72"),
+        (72, "49-72"),
+        (90, "49-72"),
+    ],
+)
 def test_tenure_group_boundaries(row, tenure, group):
     row["tenure"] = tenure
     assert transform(row)["tenure_group"].iloc[0] == group
 
 
-@pytest.mark.parametrize("method,expected", [
-    ("Bank transfer (automatic)", 1), ("Credit card (automatic)", 1),
-    ("Electronic check", 0), ("Mailed check", 0),
-])
+@pytest.mark.parametrize(
+    "method,expected",
+    [
+        ("Bank transfer (automatic)", 1),
+        ("Credit card (automatic)", 1),
+        ("Electronic check", 0),
+        ("Mailed check", 0),
+    ],
+)
 def test_auto_payment(row, method, expected):
     row["PaymentMethod"] = method
     assert transform(row)["auto_payment"].iloc[0] == expected

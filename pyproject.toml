@@ -14,11 +14,16 @@ where = ["src"]
 testpaths = ["tests"]
 pythonpath = ["src"]
 filterwarnings = ["ignore::DeprecationWarning", "ignore::FutureWarning"]
+markers = ["integration: slower tests that use real data, MLflow or a running API"]
+addopts = "-m 'not integration'"
 
 [tool.ruff]
 line-length = 100
 target-version = "py311"
 extend-exclude = ["notebooks"]
+
+[tool.ruff.format]
+quote-style = "double"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP"]

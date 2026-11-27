@@ -1,18 +1,42 @@
 """Central place for column lists, hyperparameters and business assumptions."""
 
 INPUT_COLUMNS = [
-    "gender", "SeniorCitizen", "Partner", "Dependents", "tenure", "PhoneService",
-    "MultipleLines", "InternetService", "OnlineSecurity", "OnlineBackup",
-    "DeviceProtection", "TechSupport", "StreamingTV", "StreamingMovies", "Contract",
-    "PaperlessBilling", "PaymentMethod", "MonthlyCharges", "TotalCharges",
+    "gender",
+    "SeniorCitizen",
+    "Partner",
+    "Dependents",
+    "tenure",
+    "PhoneService",
+    "MultipleLines",
+    "InternetService",
+    "OnlineSecurity",
+    "OnlineBackup",
+    "DeviceProtection",
+    "TechSupport",
+    "StreamingTV",
+    "StreamingMovies",
+    "Contract",
+    "PaperlessBilling",
+    "PaymentMethod",
+    "MonthlyCharges",
+    "TotalCharges",
 ]
 TARGET = "Churn"
 
 NUM_COLS = ["tenure", "MonthlyCharges", "TotalCharges", "num_addons", "price_change"]
 BIN_COLS = [
-    "gender", "Partner", "Dependents", "PhoneService", "MultipleLines",
-    "PaperlessBilling", "OnlineSecurity", "OnlineBackup", "DeviceProtection",
-    "TechSupport", "StreamingTV", "StreamingMovies",
+    "gender",
+    "Partner",
+    "Dependents",
+    "PhoneService",
+    "MultipleLines",
+    "PaperlessBilling",
+    "OnlineSecurity",
+    "OnlineBackup",
+    "DeviceProtection",
+    "TechSupport",
+    "StreamingTV",
+    "StreamingMovies",
 ]
 ORD_COLS = ["Contract"]
 CONTRACT_ORDER = ["Month-to-month", "One year", "Two year"]
